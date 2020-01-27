@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	
+	<error-handler name="globalError_Handler" doc:id="5f587eec-8d4b-494e-8503-4cdcaddae5d5">
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="5e22aa45-fc32-4e75-90bb-6c48188dec15" type="VALIDATION:INVALID_BOOLEAN" >
+				<ee:transform doc:name="Error message" doc:id="1ce47f65-2613-4dd3-9ee2-35cef5a1dc65" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message": "Invalid Country" ++ " " ++ (vars.countryName default "   ") ++ "! Please note weather data is available only for " ++ vars.validCountries as String
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<set-variable value="200" doc:name="httpStatus" doc:id="dfd5b53b-ffac-47a6-af3e-857ea6561308" variableName="httpStatus" />
+			</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="5015a1e5-04e8-4d32-b55f-3737e923e8b0" type="HTTP:CONNECTIVITY">
+			<ee:transform doc:name="Transform Message" doc:id="6543b83a-b46b-4230-8261-e4f045b4fd43" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message": error.description
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-propagate>
+		
+</error-handler>
+</mule>

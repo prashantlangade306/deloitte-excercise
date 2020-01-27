@@ -1,0 +1,7 @@
+openweatherapi:
+  host: "api.openweathermap.org"
+  path: "/data/2.5/weather"
+
+westclickesapi:
+  host: "westclicks.com"
+  path: "/webservices/"
